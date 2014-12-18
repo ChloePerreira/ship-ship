@@ -1,4 +1,7 @@
 class PackagesController < ApplicationController
+require 'active_shipping'
+include ActiveMerchant::Shipping
+
   def new
     package_details
     #response = Package.create(
@@ -24,8 +27,8 @@ class PackagesController < ApplicationController
   
   def package_details
     package = Package.new(
-      (params[:weight] * 16),
-      [params[:length], params[:width], params[:height]],
+      (params[:weight].to_f * 16),
+      [params[:length].to_i, params[:width].to_i, params[:height].to_i],
       :units => :imperial
     )
     destination = Location.new(
