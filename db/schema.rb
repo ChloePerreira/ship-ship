@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20141217213808) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "packages", force: true do |t|
     t.string   "weight"
     t.string   "length"
