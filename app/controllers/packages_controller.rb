@@ -36,7 +36,7 @@ class PackagesController < ApplicationController
     )
     origin = Location.new(
       :country => 'US',
-      :state = 'WA',
+      :state => 'WA',
       :city => 'Seattle',
       :zip => '98109',
     )   
