@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   
-  post '/ship/package', to: 'packages#new'
+  get '/ship/package', to: 'packages#new'
 
 
 
