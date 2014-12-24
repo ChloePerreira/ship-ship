@@ -2,21 +2,18 @@ class PackagesController < ApplicationController
 require 'active_shipping'
 include ActiveMerchant::Shipping
 
- # If I put any kind of if statement here, even an "if false end" it breaks the whole thing
   def new
-    # x = false
-    # if x
-    #  render json: {error: "Please provide a valid zip code"}, status: :400
-    # else
+    if params[:zip].length != 5
+      render :json => {:error => "Invalid zip code"}, :status => 404
+    elsif params[:state].length != 2
+      render :json => {:error => "Invalid state abbreviation"}, :status => 404
+    else
       package_details
-    # end
+    end
   end
 
   
   def package_details
-    #if params[:zip] != "98109" -- this breaks everything, why????
-    #  render json: {error: "Please provide a valid zip code"}, status: :400
-    #else
       package = build_package
       origin = set_origin
       destination = set_destination
@@ -24,7 +21,6 @@ include ActiveMerchant::Shipping
       ups_rates = ups_request(origin, destination, package)
       response = ups_rates + usps_rates
       render json: response
-    #end
   end
 
   def build_package
@@ -47,8 +43,6 @@ include ActiveMerchant::Shipping
   end 
   
   def set_destination
-    #if params[:zip].length != 5
-    #  render json: {error: "Please provide a valid zip code"}, status: :400
    # elsif params[:state].length != 2
    #   render json: {error: "Please provide a valid state abbreviation"}, status: :400
    # else
