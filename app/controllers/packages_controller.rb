@@ -3,7 +3,9 @@ require 'active_shipping'
 include ActiveMerchant::Shipping
 
   def new
-    if params[:zip].length != 5
+    if params[:state].empty? || params[:city].empty? || params[:zip].empty?
+      render :json => {:error => "Incomplete address"}, :status => 404
+    elsif params[:zip].length != 5
       render :json => {:error => "Invalid zip code"}, :status => 404
     elsif params[:state].length != 2
       render :json => {:error => "Invalid state abbreviation"}, :status => 404
@@ -20,7 +22,20 @@ include ActiveMerchant::Shipping
       usps_rates = usps_request(origin, destination, package)
       ups_rates = ups_request(origin, destination, package)
       response = ups_rates + usps_rates
+      log = make_string
+      Request.create(option: log, ip: request.remote_ip)
       render json: response
+  end
+
+  def make_string
+    x = []
+    y = usps_request(set_origin, set_destination, build_package) + ups_request(set_origin, set_destination, build_package)
+    y.each do |option|
+      if option[0] == "UPS Ground" || option[0] == "UPS Second Day Air" || option[0] == "USPS Priority Mail 1-Day"
+        x.push(option[0..1])
+      end
+    end
+    x.to_s
   end
 
   def build_package
